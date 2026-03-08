@@ -22,15 +22,6 @@ This node acts as a middleware between your teleoperation node (publishing to `/
 
 Backward movement and in-place turning are **never** blocked.
 
-### Architecture
-simple_teleop ──→ /desired_cmd_vel (TwistStamped)
-↓
-safety_filter
-↓
-/diff_drive_controller/cmd_vel ──→ robot base controller
-↑
-/scan (LaserScan)
-
 
 ```bash
 # 1. Launch simulation
