@@ -15,7 +15,7 @@ This node acts as a middleware between your teleoperation node (publishing to `/
 
 ### How It Works
 
-1. Subscribes to `/desired_cmd_vel` (TwistStamped) — your raw teleop commands
+1. Subscribes to `/desired_cmd_vel` (TwistStamped) — raw teleop commands
 2. Subscribes to `/scan` — reads the minimum valid range across **all** laser beams
 3. If `min_distance ≤ 0.50 m` **and** the desired `linear.x > 0` → sets `linear.x = 0.0`
 4. Publishes filtered command to `/diff_drive_controller/cmd_vel`
@@ -23,24 +23,22 @@ This node acts as a middleware between your teleoperation node (publishing to `/
 Backward movement and in-place turning are **never** blocked.
 
 ### Architecture
-your_teleop_node ──→ /desired_cmd_vel (TwistStamped)
+simple_teleop ──→ /desired_cmd_vel (TwistStamped)
 ↓
 safety_filter
 ↓
 /diff_drive_controller/cmd_vel ──→ robot base controller
 ↑
 /scan (LaserScan)
-text### Installation & Usage
 
-Assuming the node is part of your ROS 2 package (e.g. `my_diff_robot`):
 
 ```bash
-# 1. Launch your simulation / robot (so /scan topic is available)
-ros2 launch my_diff_robot gazebo.launch.py    # or whatever your launch file is
+# 1. Launch simulation
+ros2 launch my_diff_robot robot.launch.py
 
-# 2. Run your teleoperation node (publishes /desired_cmd_vel)
-ros2 run my_diff_robot simple_teleop          # or python3 simple_teleop.py
+# 2. Run teleoperation node (publishes /desired_cmd_vel (change publish topic from /diff_drive_controller/cmd_vel to /desired_cmd_vel manualy) 
+python3 src/my_diff_robot/scripts/simple_teleop.py 
 
 # 3. Run the safety filter
-ros2 run my_diff_robot safety_filter
+python3 src/my_diff_robot/scripts/safety_filter.py 
 Now press w / arrow up → robot stops in front of obstacles closer than 50 cm, but can still turn (a/d) and go backward (x / s).
